@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<title>Curriculo Amoroso</title>
+		<link rel="stylesheet" href="{{theme_css()}}" type="text/css"/>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="header">
+				<div id="logo">
+					<h1><a href="/">Curriculo Amoroso</a></h1>
+					<p>Deixe seu curriculo aqui!</p>
+				</div>
+				<div id="search">
+					<fieldset>
+						<input type='text' name='q' id='search-text' size='15'/>
+						<input type='submit' id='search-submit' value='Procurar'/>
+						{{xsrf_form_html()}}
+					</fieldset>
+				</div>
+			</div>
+		</div>
+		<div id="menu">
+			<ul>
+				<li class="current_page_item"><a href="/">Inicio</a></li>
+				<li><a href="/find">Encontre pessoas</a></li>
+			</ul>
+		</div>
+
+		<!--Starting the page-->
+		<div id="page">
+			<div id="page-bgtop">
+				<div id="page-bgbtm">
+					<div id="content">
+						<div class="post">
+							<h2 class="title">Bem-vindo ao curriculo amoroso</h2>
+							<div class="entry">
+								Deixe seu curriculo aqui e...
+								Bem-vindo {{user_displayname}}
+							</div>
+						</div>
+						<div style="clear: both;">&nbsp;</div>
+					</div>
+					<div id="sidebar">
+						<ul>
+							<li>
+								<h2>Menu do usuário</h2>
+							</li>
+							<li>
+								<ul>
+									<li><a href='#'>Meu perfil</a></li>
+								</ul>
+							</li>
+						</ul>
+						<div style="clear: both;">&nbsp;</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
