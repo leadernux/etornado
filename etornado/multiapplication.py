@@ -1,7 +1,6 @@
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
+# -*_ coding: utf-8 -*-
 
-__author__="root"
+__author__="otavio"
 __date__ ="$11/10/2009 13:22:45$"
 
 import tornado.web
@@ -14,15 +13,13 @@ import re
 import os
 
 from database import EightDatabaseHandler
-from session import EightSession
 
 class MultiHostApplication(tornado.web.Application):
-	def __init__(self,handlers=None, default_host="", transforms=None,**settings):
+	def __init__(self,handlers=None, default_host=[0,".*"], transforms=None,**settings):
 		tornado.web.Application.__init__(self,handlers,default_host,transforms,**settings);
 
-		if self.settings.get("use_multihost"):
-			if self.settings.get("multihost_db_host"):
-
+		if self.settings.get("multihost_db_host"):
+			try:
 				self.database = EightDatabaseHandler.instance(
 							host=self.settings.get("multihost_db_host"),
 							database=self.settings.get("multihost_db_name"),
@@ -34,12 +31,12 @@ class MultiHostApplication(tornado.web.Application):
 				self.hosts = []
 				for host in self.database.query("SELECT * FROM hosts"):
 					self.hosts.append([host.id,host.hostname])
-			else:
-				self.database = False
-				self.hosts = False
+			except Exception, e: raise Exception("Cannot connect to database: "+str(e))
 		else:
 			self.database = False
 			self.hosts = False
+
+		self.default_host = default_host
 
 	def __call__(self,request):
 		host = request.host.lower().split(":")[0]
@@ -50,18 +47,18 @@ class MultiHostApplication(tornado.web.Application):
 					request.hostName = host
 					break
 				else:
-					request.hostId = False
-					request.hostName = False
+					request.hostId = self.default_host[0]
+					request.hostName = self.default_host[1]
 		else:
-			request.hostId = False
-			request.hostName = False
+			request.hostId = self.default_host[0]
+			request.hostName = self.default_host[1]
 
 		request.database = self.database
 
 		tornado.web.Application.__call__(self,request)
 
 	@classmethod
-	def instance(cls,handlers=None, default_host="", transforms=None,**settings):
+	def instance(cls,handlers=None, default_host=[0,".*"], transforms=None,**settings):
 
 		if not hasattr(cls,"_instance"):
 			cls._instance = cls(handlers, default_host, transforms,**settings)

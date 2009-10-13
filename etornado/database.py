@@ -1,5 +1,4 @@
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
+# -*- coding: utf-8 -*-
 
 __author__="otavio"
 __date__ ="$11/10/2009 13:20:44$"
