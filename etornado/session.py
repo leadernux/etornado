@@ -7,8 +7,12 @@ __date__ ="$11/10/2009 20:55:03$"
 
 try:
 	import time
-	import pickle
+
+	from etornado.utils.serialize import serialize
+	from etornado.utils.serialize import unserialize
+
 	import random
+
 	import hashlib
 except ImportError,e:
 	raise Exception("Session: Import essential modules: "+str(e))
@@ -41,12 +45,12 @@ class EightSessionDatabaseBackend(object):
 	def get_session(self,session_id):
 		session_data = self.database.get("SELECT * FROM session WHERE session_id = %s",session_id)
 
-		if session_data: return pickle.loads(str(session_data.session_data))
+		if session_data: return unserialize(str(session_data.session_data))
 		return None
 
 	def set_session(self,session_id, session_data):
 		session_time = int(time.time())
-		session_data = pickle.dumps(session_data)
+		session_data = serialize(session_data)
 
 		sql = """INSERT INTO session (`session_id`, `session_data`, `session_time`)
 				VALUES (%s, %s, %s)
@@ -76,7 +80,7 @@ class EightSessionFileBackend(object):
 		if os.path.exists(session_path):
 			try:
 				fp = open(session_path,"r")
-				tmp = pickle.load(fp)
+				tmp = unserialize(fp.read())
 				fp.close()
 			except: return None
 			finally: return tmp
@@ -87,7 +91,7 @@ class EightSessionFileBackend(object):
 		session_path = os.path.join(self.file_path, "sess_"+session_id+".txt")
 		try:
 			fp = open(session_path,"w+")
-			pickle.dump(session_data,fp)
+			fp.write(serialize(session_data))
 			fp.close()
 		except: return False
 
@@ -107,13 +111,26 @@ class EightSessionMemcacheBackend(object):
 
 	def __init__(self):
 		try:
-			import cmemcached
+			try:
+				import cmemcached
+				memcachemodule = cmemcached
+			except:
+				try:
+					import memcache
+					memcachemodule = memcache
+				except:
+					raise Exception("Memcache modules not found")
+
 			from etornado.multiapplication import MultiHostApplication
+
 			app = MultiHostApplication.instance()
+
 			if app.settings.get("memcache_servers"):
-				self.memcache_client = cmemcached.Client(app.settings.get("memcache_servers"))
-			else: raise Exception()
-		except: raise Exception("CMemcacheD not initiated")
+				self.memcache_client = memcachemodule.Client(app.settings.get("memcache_servers"))
+
+			else: raise Exception("memcache_servers not configured")
+
+		except: raise Exception("Memcache not initiated")
 
 	def get_session(self,session_id):
 		return self.memcache_client.get("session_"+session_id)

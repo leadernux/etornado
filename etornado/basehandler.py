@@ -17,7 +17,6 @@ class BaseHandler(tornado.web.RequestHandler):
 
 		#Themes
 		self.function_list = dict(
-			theme_css=self.theme_css,
 			user_displayname=self.user_displayname
 		)
 
@@ -27,9 +26,6 @@ class BaseHandler(tornado.web.RequestHandler):
 			return "Convidado"
 		else:
 			return "Usuário!"
-
-	def theme_css(self):
-		return self.static_url("themes/adornment/style.css")
 
 	def render(self,template_name, **kwargs):
 

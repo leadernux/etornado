@@ -49,6 +49,9 @@ def get_handlers(file_name):
 	for myFile in glob.glob(myDir+"/*handler.py"):
 		moduleName = os.path.basename(myFile).split(".")[0]
 		moduleObject = __import__(moduleName,fromlist = ["handlers"])
-		myModules.append(moduleObject.getHandlerInfo())
+		tmp = moduleObject.getHandlerInfo()
+		if type(tmp) == type([]):
+			for i in tmp: myModules.append(i)
+		else: myModules.append(tmp)
 
 	return myModules
