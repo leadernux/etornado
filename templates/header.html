@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<title>{{blog_info("blog_title")}}</title>
+		<link rel="stylesheet" href="{{theme_css()}}" type="text/css"/>
+		<script src="http://malsup.com/jquery/jquery-1.2.6.js"></script>
+		<script src="http://github.com/malsup/cycle/raw/master/jquery.cycle.all.js?v2.72"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('#headerImages').cycle('fade')
+			})
+		</script>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="headerImages" class="pics">
+				<img src="{{static_url("images/slideshow/01.png")}}" width="960" height="110" />
+				<img src="{{static_url("images/slideshow/02.png")}}" width="960" height="110" />
+			</div>
+			<div id="header">
+				<div id="logo">
+					<h1><a href="/">{{blog_info("blog_name")}}</a></h1>
+					<p>{{blog_info("blog_subtitle")}}</p>
+				</div>
+			</div>
+			<div id="menu">
+				<ul>
+					{{gen_menu_items()}}
+				</ul>
+			</div>
+
+			<!--Starting the page-->
+			<div id="page">
+				<div id="page-bgtop">
+					<div id="page-bgbtm">
+						<div id="content">

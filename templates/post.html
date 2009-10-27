@@ -1,0 +1,16 @@
+{% include "header.html" %}
+
+<div class="post">
+	<h2 class="title">{{post.posts_title}}</h2>
+	<p class="meta">Postado por {{post.users_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}</p>
+	<div class="entry">
+		<div class="entry-bgtop">
+			<div class="entry-bgbtm">
+				{{render_content(post.posts_text)}}
+			</div>
+
+		</div>
+	</div>
+</div>
+
+{% include "footer.html" %}
