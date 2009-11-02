@@ -1,4 +1,4 @@
-# -*_ coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 __author__="otavio"
 __date__ ="$11/10/2009 13:22:45$"
@@ -19,7 +19,7 @@ class MultiHostApplication(Application):
 		Application.__init__(self,handlers,default_host,transforms,**settings);
 
 		if self.settings.get("multihost_db_host"):
-			#try:
+			try:
 				self.database = EightDatabaseHandler.instance(
 							host=self.settings.get("multihost_db_host"),
 							database=self.settings.get("multihost_db_name"),
@@ -31,8 +31,8 @@ class MultiHostApplication(Application):
 
 				self.hosts = []
 				for host in self.database.query("SELECT * FROM hosts"):
-					self.hosts.append([host.id,host.hostname])
-			#except Exception, e: raise Exception("Cannot connect to database: "+str(e))
+					self.hosts.append([host.id,host.hostname, re.compile(host.hostname)])
+			except Exception, e: raise Exception("Cannot connect to database: "+str(e))
 		else:
 			self.database = False
 			self.hosts = False
@@ -43,7 +43,7 @@ class MultiHostApplication(Application):
 		host = request.host.lower().split(":")[0]
 		if self.hosts:
 			for hostname in self.hosts:
-				if re.match(hostname[1],host):
+				if hostname[2].match(host):
 					request.hostId = hostname[0]
 					request.hostName = host
 					break
