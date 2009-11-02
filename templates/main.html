@@ -2,16 +2,18 @@
 
 {% for post in posts %}
 	<div class="post">
-		<h2 class="title"><a href="/post/view/{{post.posts_id}}">{{post.posts_title}}</a></h2>
-		<p class="meta">Postado por {{post.users_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}</p>
+		<h2 class="title"><a href="/post/view/{{niceurl(post.posts_title)}}/{{post.posts_id}}">{{post.posts_title}}</a></h2>
+		<p class="date">{{_("Posted by")}} {{post.users_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}</p>
 		<div class="entry">
-			<div class="entry-bgtop">
-				<div class="entry-bgbtm">
-					{{render_content(word_wrap(post.posts_text,500))}}
-					<p><a href="/post/view/{{post.posts_id}}" class="links">Leia Mais</a> </p>
-				</div>
-
-			</div>
+			<p>
+				{{render_content(word_wrap(post.posts_text,500))}}
+			</p>
+		</div>
+		<div class="meta">
+			<p class="links">
+				<a href="/post/view/{{niceurl(post.posts_title)}}/{{post.posts_id}}#comments" class="comments">{{_("Comments")}} ({{post.posts_comments}})</a>
+				<a href="/post/view/{{niceurl(post.posts_title)}}/{{post.posts_id}}" class="more">{{_("Read more")}}</a>
+			</p>
 		</div>
 	</div>
 {% end %}

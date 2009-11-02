@@ -3,7 +3,7 @@
 __author__="otavio"
 __date__ ="$16/10/2009 21:34:03$"
 
-from etornado.basehandler import BaseHandler
+from etornado.basehandler import BaseHandler, template_method
 
 from eblog.BlogConfig import BlogConfig
 
@@ -12,29 +12,26 @@ import time
 class BlogBaseHandler(BaseHandler):
 	def __init__(self,application, request, transforms = None):
 		BaseHandler.__init__(self,application, request, transforms)
-		self.function_list.update(dict(
-			blog_info = self.blog_info,
-			theme_css=self.theme_css,
-			gen_menu_items=self.gen_menu_items,
-			timestamp_convert=self.timestamp_convert,
-			word_wrap=self.word_wrap,
-			render_content=self.render_content
-		))
 
+	@template_method
 	def render_content(self,string):
 		return "<br/>".join(string.split("\n"))
 
+	@template_method
 	def word_wrap(self,text,limit,suffix='...'):
 		if len(text) <= limit:
 			return text
 		return text[:limit].rsplit(' ', 1)[0]+suffix
 
+	@template_method
 	def timestamp_convert(self,timestamp,format):
 		return time.strftime(format,time.localtime(timestamp))
 
+	@template_method
 	def theme_css(self):
 		return self.static_url("themes/"+self.blog_info("blog_theme")+"/style.css")
 
+	@template_method
 	def gen_menu_items(self):
 		_menuItems = self.database.query("SELECT * FROM links WHERE blogs_id = %s ORDER BY links_weight", self.blog_info("blog_id"), use_cache = True)
 
@@ -50,6 +47,7 @@ class BlogBaseHandler(BaseHandler):
 
 		return html;
 
+	@template_method
 	def blog_info(self,key_name):
 		blog_config = BlogConfig().instance().get_info(self.hostId)
 		if not blog_config: return ""

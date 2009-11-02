@@ -1,16 +1,72 @@
 {% include "header.html" %}
 
 <div class="post">
-	<h2 class="title">{{post.posts_title}}</h2>
-	<p class="meta">Postado por {{post.users_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}</p>
+	<h2 class="title">
+		{% block post_title %}
+			{{post.posts_title}}
+		{% end %}
+	</h2>
+	<p class="date">
+		{% block post_info %}
+		{{_("Posted by")}} {{post.users_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}
+		{% end %}
+	</p>
 	<div class="entry">
-		<div class="entry-bgtop">
-			<div class="entry-bgbtm">
+		<p>
+			{% block post_content %}
 				{{render_content(post.posts_text)}}
-			</div>
-
-		</div>
+			{% end %}
+		</p>
 	</div>
+	{% block post_meta %}
+		<div class="meta">
+				<p class="tags">
+					Tags:
+					{% for tag in tags %}
+						<a href="/posts/by-tag/{{niceurl(tag.tags_name)}}/{{tag.tags_id}}">{{tag.tags_name}}</a>
+					{% end %}
+				</p>
+		</div>
+	{% end %}
+	<div class="clearfix">&nbsp;</div>
+
+	{% block post_comments %}
+		<a href="#" name="comments"></a>
+		<div class="comments">
+			<h3 class="title">{{_("Comments")}}</h3>
+
+			{% if len(comments) > 0 %}
+				{% for comment in comments %}
+					<div class="comment {{cycle(['even','odd'])}}">
+						<p class="date">{{_("Comment by")}}: {{comment.comments_author}} {{timestamp_convert(comment.comments_time,"as %H:%M em %d/%m/%Y")}}</p>
+						<p class="comment_text">
+							{{render_content(comment.comments_text)}}
+						</p>
+					</div>
+				{% end %}
+			{% else %}
+				{{_("No comments")}}!
+			{% end %}
+
+			<h3>Deixe um comentário</h3>
+			<form method="POST" action="/post/post-comment">
+				<fieldset>
+					<p>
+						<input type="text" name="display_name" size="30"/>
+						<label for="display_name">Seu nome</label>
+					</p>
+					<p>
+						<textarea cols="30" rows="5" name="comment_text"></textarea>
+					</p>
+					<p>
+						<input type="submit" value="Postar"/>
+					</p>
+					{{xsrf_form_html()}}
+					<input type="hidden" name="posts_id" value="{{post.posts_id}}"/>
+				</fieldset>
+			</form>
+		</div>
+	{% end %}
 </div>
 
 {% include "footer.html" %}

@@ -1,0 +1,18 @@
+{% extends "post.html" %}
+
+{% block post_title %}
+{{page.pages_title}}
+{% end %}
+
+{% block post_info %}
+{% end %}
+
+{% block post_content %}
+	{{render_content(page.pages_text)}}
+{% end %}
+
+{% block post_meta %}
+{% end %}
+
+{% block post_comments %}
+{% end %}
