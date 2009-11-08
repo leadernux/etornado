@@ -33,6 +33,20 @@ if __name__ == "__main__":
 	define("session_storage_engine", default = "memcache", help = "Session Storage Backend (file, memcache, database)", type = str)
 	define("cookie_secret", default = "3c82d334e491b20a410a61ad2725bd18/Vo=", help = "Cookie Secret Hash", type = str)
 
+	#OAuth params
+	#Twitter
+	define("twitter_consumer_key", default = None, help = "Twitter consumer key")
+	define("twitter_consumer_secret", default = None, help = "Twitter consumer secret")
+	#Friendfeed
+	define("friendfeed_consumer_key", default = None, help = "FriendFeed consumer key")
+	define("friendfeed_consumer_secret", default = None, help = "FriendFeed consumer secret")
+	#Google
+	define("google_consumer_key", default = None, help = "Google Consumer Key")
+	define("google_consumer_secret", default = None, help = "Google Consumer Secret")
+	#Facebook
+	define("facebook_api_key", default = None, help = "Facebook Api Key")
+	define("facebook_secret", default = None, help = "Facebook Secret")
+
 	'''
 	Search for the application config in the following files: [/etc/eapplication.conf, ./application.conf]
 	'''
@@ -97,6 +111,26 @@ if __name__ == "__main__":
 		"database_cache_backend": options.database_cache_backend,
 		"session_storage_engine": options.session_storage_engine
 	}
+
+	#Twitter
+	if options.twitter_consumer_key is not None:
+		settings["twitter_consumer_key"] = options.twitter_consumer_key
+		settings["twitter_consumer_secret"] = options.twitter_consumer_secret
+
+	#Friendfeed
+	if options.friendfeed_consumer_key is not None:
+		settings["friendfeed_consumer_key"] = options.friendfeed_consumer_key
+		settings["friendfeed_consumer_secret"] = options.friendfeed_consumer_secret
+
+	#Google
+	if options.google_consumer_key is not None:
+		settings["google_consumer_key"] = options.google_consumer_key
+		settings["google_consumer_secret"] = options.google_consumer_secret
+
+	#Facebook
+	if options.facebook_api_key is not None:
+		settings["facebook_api_key"] = options.facebook_api_key
+		settings["facebook_secret"] = options.facebook_secret
 
 	'''
 	Instance the Application

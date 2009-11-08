@@ -28,9 +28,25 @@ class BaseHandler(_BaseHandler):
 		self.session = etornado.session.EightSession(self)
 
 	@template_method
-	def user_displayname(self):
-		if not self.get_current_user(): return "Convidado"
-		else: return "Usuário!"
+	def user_data(self,what):
+		if not self.get_current_user(): return None
+		else:
+			user_data = self.database.get("SELECT * FROM users INNER JOIN profile ON profile.users_id = users.users_id WHERE users.users_id = %s LIMIT 1",
+							self.get_current_user(), use_cache = True, cache_time = 240
+						)
+
+			if user_data is not None: 
+				try:
+					data_map = {'displayname': 'profile_displayname', 'location': 'profile_location', 'image_url': 'profile_image_url', 'name' : 'users_name'}
+					return user_data[data_map[what]]
+				except: return None
+
+			else: return None
+
+	@template_method
+	def user_logged(self):
+		if not self.get_current_user(): return False
+		return True
 
 	def render(self,template_name, **kwargs):
 		self.real_function_list = {}

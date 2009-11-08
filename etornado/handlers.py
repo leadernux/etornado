@@ -34,6 +34,45 @@ class LoginHandler(basehandler.BaseHandler):
 		else:
 			self.redirect("/")
 
+from tornado.web import asynchronous as tornado_asynchnous
+
+try:
+	from tornado.auth import TwitterMixin as TornadoTwitterMixin
+	from etornado.profile import Profile
+
+	class TwitterLoginHandler(basehandler.BaseHandler, TornadoTwitterMixin):
+		@tornado_asynchnous
+		def get(self):
+			if self.get_argument("oauth_token",None):
+				self.get_authenticated_user(self.async_callback(self._on_auth))
+				return
+			self.authorize_redirect()
+
+		def _on_auth(self,user):
+			if not user:
+				self.redirect('/login/nouser')
+			else:
+				user_id = 'twitter-'+str(user["id"])
+				user_fields = {
+						"profile_displayname" : user['name'],
+						"profile_location" : user['location'],
+						"profile_image_url" : user['profile_image_url'],
+						"user_name" : user['username']
+					}
+
+				self.session.set_value("uid",user_id)
+
+				profile = Profile()
+				if profile.login(user_id,user_fields): self.redirect('/')
+				else: self.redirect('/login/nouser')
+except:
+	class FailLoginHandler(basehandler.BaseHandler):
+		def get(self):
+			self.write("Missing pyCurl")
+
+	class TwitterLoginHandler(FailLoginHandler):
+		pass
+
 class LogoutHandler(basehandler.BaseHandler):
 	def get(self):
 		self.session.delete_session()
@@ -44,6 +83,7 @@ def get_handlers(file_name):
 	myModules = []
 
 	myModules.append((r"/login",LoginHandler))
+	myModules.append((r"/login-twitter",TwitterLoginHandler))
 	myModules.append((r"/logout",LogoutHandler))
 
 	for myFile in glob.glob(myDir+"/*handler.py"):

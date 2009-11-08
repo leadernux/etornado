@@ -3,7 +3,7 @@
 {% for post in posts %}
 	<div class="post">
 		<h2 class="title"><a href="/post/view/{{niceurl(post.posts_title)}}/{{post.posts_id}}">{{post.posts_title}}</a></h2>
-		<p class="date">{{_("Posted by")}} {{post.users_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}</p>
+		<p class="date">{{_("Posted by")}} {{post.profile_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}</p>
 		<div class="entry">
 			<p>
 				{{render_content(word_wrap(post.posts_text,500))}}

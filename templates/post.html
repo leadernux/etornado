@@ -8,7 +8,7 @@
 	</h2>
 	<p class="date">
 		{% block post_info %}
-		{{_("Posted by")}} {{post.users_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}
+		{{_("Posted by")}} {{post.profile_displayname}} {{timestamp_convert(post.posts_time,"as %H:%M em %d/%m/%Y")}}
 		{% end %}
 	</p>
 	<div class="entry">
@@ -52,8 +52,12 @@
 			<form method="POST" action="/post/post-comment">
 				<fieldset>
 					<p>
-						<input type="text" name="display_name" size="30"/>
-						<label for="display_name">Seu nome</label>
+						{% if not user_logged() %}
+							<input type="text" name="display_name" size="30"/>
+							<label for="display_name">Seu nome</label>
+						{% else %}
+							<b>{{user_data('displayname')}}:</b>
+						{% end %}
 					</p>
 					<p>
 						<textarea cols="30" rows="5" name="comment_text"></textarea>

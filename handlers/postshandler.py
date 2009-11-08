@@ -7,7 +7,7 @@ import etornado.utils.etime
 class PostsHandler(eblog.BlogBaseHandler.BlogBaseHandler):
 	def get(self,post_id = False):
 		if post_id:
-			post = self.database.query("SELECT * FROM posts INNER JOIN users ON users.users_id = posts.users_id WHERE blog_id = %s AND posts.posts_id = %s", self.blog_info("blog_id"), post_id, use_cache = True)
+			post = self.database.query("SELECT * FROM posts INNER JOIN users ON users.users_id = posts.users_id INNER JOIN profile on profile.users_id = users.users_id WHERE blog_id = %s AND posts.posts_id = %s", self.blog_info("blog_id"), post_id, use_cache = True)
 			if len(post) == 0:
 				self.e404()
 			else:

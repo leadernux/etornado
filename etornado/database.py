@@ -83,10 +83,11 @@ class EightSQLIteEngine(Connection):
 		"""Executes the given query, returning the lastrowid from the query."""
 		cursor = self._db.cursor()
 		try:
-		    cursor.execute(query, parameters)
-		    return cursor.lastrowid
+			query = query % tuple("?" * len(parameters))
+			cursor.execute(query, parameters)
+			return cursor.lastrowid
 		finally:
-		    cursor.close()
+			cursor.close()
 
 	def executemany(self,query, *parameters):
 		"""Executes the given query against all the given param sequences.
@@ -94,10 +95,11 @@ class EightSQLIteEngine(Connection):
 		"""
 		cursor = self._db.cursor()
 		try:
-		    cursor.executemany(query, parameters)
-		    return cursor.lastrowid
+			query = query % tuple("?" * len(parameters))
+			cursor.executemany(query, parameters)
+			return cursor.lastrowid
 		finally:
-		    cursor.close()
+			cursor.close()
 
 class EightMySQLEngine(Connection):
 	def __init__(self,host,database, user=None, password=None):
@@ -245,6 +247,9 @@ class EightDatabaseHandler(Connection):
 		if not "use_cache" in kwargs: use_cache = self.use_cache
 		else: use_cache = kwargs["use_cache"]
 
+		if not "cache_time" in kwargs: cache_time = self.cache_time
+		else: cache_time = kwargs["cache_time"]
+
 		if not use_cache: return self._db.query(query,*parameters)
 		else:
 			query_hash = str(md5(str(query)+serialize(parameters)).hexdigest())
@@ -262,8 +267,10 @@ class EightDatabaseHandler(Connection):
 	def iter(self, query, *parameters):
 		return self._db.iter(query,*parameters)
 
-	def get(self,query, *parameters):
-		return self._db.get(query,*parameters)
+	def get(self,query, *parameters,**kwargs):
+		rs = self.query(query,*parameters,**kwargs)
+		if rs and len(rs) >= 1: return rs[0]
+		else: return rs
 
 	def execute(self,query, *parameters):
 		return self._db.execute(query,*parameters)

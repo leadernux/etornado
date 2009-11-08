@@ -22,7 +22,9 @@
 			<div id="top-bar" class="container">
 				<div class="bar">
 					<div class="text">
-						Algum texto aqui =)
+						{% if user_logged() %}
+							Seja bem-vindo {{user_data('displayname')}}
+						{% end %}
 					</div>
 				</div>
 			</div>
